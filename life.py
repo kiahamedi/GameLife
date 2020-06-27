@@ -2,6 +2,7 @@ import os
 import time
 import sys
 import random
+from terminaltables import AsciiTable
 
 
 class Universe(object):
@@ -47,8 +48,13 @@ class Universe(object):
     # Calculate conditions for neighbours
     def calculate(self):
         newWorld = {}
+        self.lives = 0
         for y in range(self.h):
             for x in range(self.w):
+
+                if self.contents[x, y] == 1:
+                    self.lives += 1
+
                 c = self.contents[x, y]
                 u, d, l, r ,ur ,ul, dr, dl = self.getNeighbours(x, y)
                 n = [u, d, l, r ,ur ,ul, dr, dl]
@@ -67,6 +73,7 @@ class Universe(object):
                         newWorld[x, y] = 0
         
         self.contents = newWorld
+        self.generation += 1
 
 
 
@@ -121,4 +128,10 @@ while True:
     universe.calculate()
     cls()
     print(universe.getString())
+    table_data = [
+        ['Width', 'Height','Delay', 'Generation','Lives'],
+        [WIDTH, HEIGHT, DELAY, universe.generation, universe.lives]
+    ]
+    table = AsciiTable(table_data)
+    print(table.table)
     time.sleep(DELAY)
